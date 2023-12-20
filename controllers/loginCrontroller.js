@@ -1,40 +1,40 @@
+
 const emailValidation = require("../helpers/emailValidation");
-const bcrypt = require('bcrypt');
 const User = require("../models/userModels");
+const bcrypt = require("bcrypt");
 
- async function loginController(req, res) {
-    const { email, password } = req.body
+async function loginController(req, res) {
+  const { email, password } = req.body;
 
-    if (!emailValidation(email, password)) {
-         return res.status(404).send({
-            message : "place enter Invalid email"
-         })
-    }
+  if (!emailValidation(email)) {
+    return res.status(400).json({
+      message: "Please enter a valid email address",
+    });
+  }
 
-    let existingEmail = await User.find({email})
+  let existingEmail = await User.find({ email });
 
-    if (existingEmail.lenth > 0) {
-        bcrypt.compare(password, existingEmail[0].password, function(err, result) {
-            if (result){
-              return res.json({
-                "massage" : "login successfully",
-                "firstname" : existingEmail[0].firstname,
-                "lastname" : existingEmail[0].lastname,
-                "email" : existingEmail[0].email,
-              })
-            }else {
-                return res.status(400).send({
-                    error : "password not match"
-                })
-            }
-
+  if (existingEmail.length > 0) {
+    bcrypt.compare(password, existingEmail[0].password, function (err, result) {
+      if (result) {
+        return res.json({
+          Success: "Login Successfully",
+          firstName: existingEmail[0].firstname,
+          lastName: existingEmail[0].lastname,
+          email: existingEmail[0].email,
+          id: existingEmail[0]._id,
         });
-    }else {
-        return res.status(404).send({
-            message : "email not match"
-        })
-    }
+      } else {
+        return res.status(400).send({
+          error: "Password Not Matched",
+        });
+      }
+    });
+  } else {
+    return res.status(400).json({
+      message: "Email Not Matched",
+    });
+  }
+}
 
- }
-
- module.exports = loginController;
+module.exports = loginController;

@@ -53,7 +53,7 @@ async function registratincontrollers(req, res) {
                state,
                bYear,
                bMonth,
-               bDay
+               bDay,
             })
             userData.save()
 
